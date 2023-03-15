@@ -37,10 +37,9 @@ int main(int argc, const char *argv[])
     int imgFillWidth = 4;  // no. of digits which make up the file index (e.g. img-0001.png)
 
     // misc
-    int dataBufferSize = 2;       // no. of images which are held in memory (ring buffer) at the same time
-    //vector<DataFrame> dataBuffer;
+    int dataBufferSize = 2;                           // no. of images which are held in memory (ring buffer) at the same time
     ringBuffer<DataFrame> dataBuffer(dataBufferSize); // list of data frames which are held in memory at the same time
-    bool bVis = false; // visualize results
+    bool bVis = false;                                // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -61,7 +60,7 @@ int main(int argc, const char *argv[])
         //// STUDENT ASSIGNMENT
         //// TASK MP.1 -> replace the following code with ring buffer of size dataBufferSize
 
-        // push image into data frame buffer
+        /* ring buffer data structure is implemented in header file ringBuffer*/
         DataFrame frame;
         frame.cameraImg = imgGray;
         dataBuffer.push_back(move(frame));
@@ -97,7 +96,14 @@ int main(int argc, const char *argv[])
         cv::Rect vehicleRect(535, 180, 180, 150);
         if (bFocusOnVehicle)
         {
-            // ...
+            vector<cv::KeyPoint> kptsOnVehicle; // create empty feature list for current image
+
+            for (cv::KeyPoint &keyPt : keypoints)
+            {
+                if (vehicleRect.contains(keyPt.pt) == true)
+                    kptsOnVehicle.push_back(move(keyPt));
+            }
+            keypoints = move(kptsOnVehicle);
         }
 
         //// EOF STUDENT ASSIGNMENT
@@ -118,7 +124,6 @@ int main(int argc, const char *argv[])
 
         // push keypoints and descriptor for current frame to end of data buffer
         dataBuffer.last().keypoints = keypoints;
-        //(dataBuffer.end() - 1)->keypoints = keypoints;
         cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
@@ -130,7 +135,6 @@ int main(int argc, const char *argv[])
         cv::Mat descriptors;
         string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints(dataBuffer.last().keypoints, dataBuffer.last().cameraImg, descriptors, descriptorType);
-        //descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
         //// EOF STUDENT ASSIGNMENT
 
         // push descriptors for current frame to end of data buffer
@@ -140,7 +144,6 @@ int main(int argc, const char *argv[])
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
-
             /* MATCH KEYPOINT DESCRIPTORS */
 
             vector<cv::DMatch> matches;
@@ -177,7 +180,7 @@ int main(int argc, const char *argv[])
                 string windowName = "Matching keypoints between two camera images";
                 cv::namedWindow(windowName, 7);
                 cv::imshow(windowName, matchImg);
-                cout << "Press key to continue to next image" << endl;
+                cout << "Press key to continue to next image" << endl << endl;
                 cv::waitKey(0); // wait for key to be pressed
             }
             bVis = false;
