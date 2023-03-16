@@ -41,6 +41,10 @@ int main(int argc, const char *argv[])
     ringBuffer<DataFrame> dataBuffer(dataBufferSize); // list of data frames which are held in memory at the same time
     bool bVis = false;                                // visualize results
 
+    // configuration
+    vector<string> detectorTypes = {"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"}; 
+    string detectorType = detectorTypes[3];
+
     /* MAIN LOOP OVER ALL IMAGES */
 
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex++)
@@ -72,20 +76,17 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
+       
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
         //// -> HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
 
-        if (detectorType.compare("SHITOMASI") == 0)
-        {
-            detKeypointsShiTomasi(keypoints, imgGray, false);
-        }
+        if (detectorType.compare("SHITOMASI") == 0 || detectorType.compare("HARRIS") == 0)
+            detKeypointsClassic(keypoints, imgGray, detectorType, false);
         else
-        {
-            //...
-        }
+            detKeypointsModern(keypoints, imgGray, detectorType, false);
+
         //// EOF STUDENT ASSIGNMENT
 
         //// STUDENT ASSIGNMENT
@@ -105,6 +106,7 @@ int main(int argc, const char *argv[])
             }
             keypoints = move(kptsOnVehicle);
         }
+        cout << "[+] MP.7 " << detectorType << " detection with n=" << keypoints.size() << " keypoints on the preceding vehicle";
 
         //// EOF STUDENT ASSIGNMENT
 
@@ -180,7 +182,8 @@ int main(int argc, const char *argv[])
                 string windowName = "Matching keypoints between two camera images";
                 cv::namedWindow(windowName, 7);
                 cv::imshow(windowName, matchImg);
-                cout << "Press key to continue to next image" << endl << endl;
+                cout << "Press key to continue to next image" << endl
+                     << endl;
                 cv::waitKey(0); // wait for key to be pressed
             }
             bVis = false;
