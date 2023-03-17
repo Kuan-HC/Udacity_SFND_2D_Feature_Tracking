@@ -42,8 +42,13 @@ int main(int argc, const char *argv[])
     bool bVis = false;                                // visualize results
 
     // configuration
-    vector<string> detectorTypes = {"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"}; 
-    string detectorType = detectorTypes[3];
+    vector<string> detectorTypes = {"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"};
+    string detectorType = detectorTypes[0];
+    cout << "[+] detectorType: " << detectorType << endl;
+
+    vector<string> descriptorsTypes = {"BRISK", "BRIEF", "ORB", "FREAK", "AKAZE", "SIFT"};
+    string descriptorType = descriptorsTypes[1]; // BRIEF, ORB, FREAK, AKAZE, SIFT
+    cout << "[+] descriptorType: " << descriptorType << endl;
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -76,7 +81,6 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-       
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
@@ -106,7 +110,7 @@ int main(int argc, const char *argv[])
             }
             keypoints = move(kptsOnVehicle);
         }
-        cout << "[+] MP.7 " << detectorType << " detection with n=" << keypoints.size() << " keypoints on the preceding vehicle";
+        cout << "[+] MP.7 " << detectorType << " detection with n=" << keypoints.size() << " keypoints on the preceding vehicle" << endl;
 
         //// EOF STUDENT ASSIGNMENT
 
@@ -135,8 +139,8 @@ int main(int argc, const char *argv[])
         //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints(dataBuffer.last().keypoints, dataBuffer.last().cameraImg, descriptors, descriptorType);
+
         //// EOF STUDENT ASSIGNMENT
 
         // push descriptors for current frame to end of data buffer
