@@ -34,3 +34,59 @@ See the classroom instruction and code comments for more details on each of thes
 ## Rubic
 
 #### MP.1 Data Buffer Optimization
+A ring buffer is a data structure in programming languages that is treated as a circular buffer or cyclic buffer. It is a memory buffer that is used for the temporary storage of data streams. The ring buffer stores data elements in a circular fashion, so the oldest element is replaced by the newest element when the buffer is full. The actual buffer size is set to nominal size + 1.
+As shown in the figures below. When tail == head, the buffer is empty and when (tail + 1) % len == head, the buffer is full.
+
+#### MP.2 Keypoint Detection
+The function `detKeypointsClassic` was implemented for SHITOMASI and HARRIS detectors. Other detectors were implemented in the function `detKeypointsModern`
+
+#### MP.3 Keypoint Removal
+```
+// only keep keypoints on the preceding vehicle
+  bool bFocusOnVehicle = true;
+  cv::Rect vehicleRect(535, 180, 180, 150);
+  if (bFocusOnVehicle)
+  {
+      vector<cv::KeyPoint> kptsOnVehicle; // create empty feature list for current image
+
+      for (cv::KeyPoint &keyPt : keypoints)
+      {
+        if (vehicleRect.contains(keyPt.pt) == true)
+             kptsOnVehicle.push_back(move(keyPt));
+      }
+            keypoints = move(kptsOnVehicle);
+  }
+```
+
+#### MP.4 Keypoint Descriptors
+Implement descriptors BRIEF, ORB, FREAK, AKAZE and SIFT and make them selectable by setting a string accordingly.
+```
+  //"BRISK", "BRIEF ", "ORB ", "FREAK ", "AKAZE ", "SIFT" All binary descriptors except sift
+  cv::Ptr<cv::DescriptorExtractor> descriptor;
+  if (descriptorType == "BRISK"){
+      int threshold = 30;        // FAST/AGAST detection threshold score.
+      int octaves = 3;           // detection octaves (use 0 to do single scale)
+      float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
+
+      descriptor = cv::BRISK::create(threshold, octaves, patternScale);
+  }
+  else if (descriptorType == "BRIEF"){
+      descriptor = cv::xfeatures2d::BriefDescriptorExtractor::create();
+  }
+  else if (descriptorType == "ORB"){
+      descriptor = cv::ORB::create();
+  }
+  else if (descriptorType == "FREAK"){
+      descriptor = cv::xfeatures2d::FREAK::create();
+  }
+  else if (descriptorType == "AKAZE"){
+      descriptor = cv::AKAZE::create();
+  }
+  else if (descriptorType == "SIFT"){
+      descriptor = cv::xfeatures2d::SiftDescriptorExtractor::create();
+  }
+
+  // perform feature description
+  descriptor->compute(img, keypoints, descriptors);
+
+```
