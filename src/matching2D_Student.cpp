@@ -83,12 +83,17 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
     {
         descriptor = cv::xfeatures2d::SiftDescriptorExtractor::create();
     }
-
+    
     // perform feature description
     double t = (double)cv::getTickCount();
     descriptor->compute(img, keypoints, descriptors);
-    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();    
     cout << descriptorType << " descriptor extraction in " << 1000 * t / 1.0 << " ms" << endl;
+
+    /* MP.9 */
+    static double totalT;
+    totalT += 1000 * t / 1.0;
+    cout << " total descriptor extraction in " << totalT << " ms" << endl;
 }
 
 // Detect keypoints in image using the traditional Harris detector
@@ -119,6 +124,10 @@ void detKeypointsClassic(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, con
     }
     t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
     cout << detectorType << " detection with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+    /* MP.9 */
+    static double totalT;
+    totalT += 1000 * t / 1.0;
+    cout << " total detection in " << totalT << " ms" << endl;
 
     // visualize results
     if (bVis)
@@ -165,6 +174,10 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, cons
     detector->detect(img, keypoints);
     t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
     cout << detectorType << " detection with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+    /* MP.9 */
+    static double totalT;
+    totalT += 1000 * t / 1.0;
+    cout << " total detection in " << totalT << " ms" << endl;
 
     // visualize results
     if (bVis)

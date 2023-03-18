@@ -96,6 +96,7 @@ In `matching2D_Student.cpp` line 36 - 49.
 ### MP.8 Performance Evaluation 2
 
 <b> Count the number of matched keypoints for all 10 images using all possible combinations of detectors and descriptors. In the matching step, the BF approach is used with the descriptor distance ratio set to 0.8. </b>
+
 | Detector\Descriptor | BRISK | BRIEF | ORB | FREAK | AKAZE | SIFT |
 | ---                 | :---  | :---  |:--- |:---   |:---   |:---  |
 | SHITOMASI           | 767   | 944   | 907 | 768   | -     | 927  |
@@ -108,3 +109,21 @@ In `matching2D_Student.cpp` line 36 - 49.
 
 ### MP.9 Performance Evaluation 3
 <b> Log the time it takes for keypoint detection and descriptor extraction. The results must be entered into a spreadsheet and based on this data, the TOP3 detector / descriptor combinations must be recommended as the best choice for our purpose of detecting keypoints on vehicles. </b>
+
+| Detector\Descriptor | BRISK | BRIEF | ORB   | FREAK | AKAZE | SIFT |
+| ---                 | :---  | :---  |:---   |:---   |:---   |:---  |
+| SHITOMASI           | 13.62 | 12.98 | 14.53 | 30.42 | -     | 25.58|
+| HARRIS              | 13.56 | 12.53 | 14.17 | 29.87 | -     | 25.23|
+| FAST                | 3.54  | 2.83  | 4.75  | 24.16 | -     | 12.18|
+| BRISK               | 33.33 | 31.15 | 39.23 | 52.36 | -     | 50.05|
+| ORB                 | 7.94  | 6.93  | 15.37 | 27.7  | -     | 28.96|
+| AKAZE               | 49.63 | 47.98 | 54.98 | 68.6  | 87.87 | 61.24|
+| SIFT                | 82.88 | 82.193| -     | 101.67| -     |115.09|
+
+<b> TOP3 detector / descriptor combinations: </b>
+
+| Detector\Descriptor | toal matched keypoints | avg. time |
+| :---                | :---                   | :---      |
+| FAST / BRIEF        | 873                    | 2.83      |
+| FAST / BRISK        | 744                    | 3.54      |
+| FAST / ORB          | 879                    | 4.75      |

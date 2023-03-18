@@ -43,11 +43,11 @@ int main(int argc, const char *argv[])
 
     // configuration
     vector<string> detectorTypes = {"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"};
-    string detectorType = detectorTypes[6];
+    string detectorType = detectorTypes[0];
     cout << "[+] detectorType: " << detectorType << endl;
 
     vector<string> descriptorsTypes = {"BRISK", "BRIEF", "ORB", "FREAK", "AKAZE", "SIFT"};
-    string descriptorType = descriptorsTypes[5]; // BRIEF, ORB, FREAK, AKAZE, SIFT
+    string descriptorType = descriptorsTypes[0]; // BRIEF, ORB, FREAK, AKAZE, SIFT
     cout << "[+] descriptorType: " << descriptorType << endl;
 
     /* MAIN LOOP OVER ALL IMAGES */
@@ -185,7 +185,7 @@ int main(int argc, const char *argv[])
             //cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = false;
+            bVis = true;
             if (bVis)
             {
                 cv::Mat matchImg = (dataBuffer.last().cameraImg).clone();
