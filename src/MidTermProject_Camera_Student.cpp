@@ -43,14 +43,16 @@ int main(int argc, const char *argv[])
 
     // configuration
     vector<string> detectorTypes = {"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"};
-    string detectorType = detectorTypes[0];
+    string detectorType = detectorTypes[6];
     cout << "[+] detectorType: " << detectorType << endl;
 
     vector<string> descriptorsTypes = {"BRISK", "BRIEF", "ORB", "FREAK", "AKAZE", "SIFT"};
-    string descriptorType = descriptorsTypes[1]; // BRIEF, ORB, FREAK, AKAZE, SIFT
+    string descriptorType = descriptorsTypes[5]; // BRIEF, ORB, FREAK, AKAZE, SIFT
     cout << "[+] descriptorType: " << descriptorType << endl;
 
     /* MAIN LOOP OVER ALL IMAGES */
+    /*MP. 8 Number of total matched points */
+    uint32_t totalMatchPoints = 0;
 
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex++)
     {
@@ -75,7 +77,7 @@ int main(int argc, const char *argv[])
         dataBuffer.push_back(move(frame));
 
         //// EOF STUDENT ASSIGNMENT
-        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        //cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -110,8 +112,16 @@ int main(int argc, const char *argv[])
             }
             keypoints = move(kptsOnVehicle);
         }
-        cout << "[+] MP.7 " << detectorType << " detection with n=" << keypoints.size() << " keypoints on the preceding vehicle" << endl;
-
+        //cout << "[+] MP.7 " << detectorType << " detection with n=" << keypoints.size() << " keypoints on the preceding vehicle" << endl;
+        
+        /* MP.7 neighborhood size*/
+        /*
+        double neighborhoodSize = 0.0;
+        for(const cv::KeyPoint& point : keypoints){
+            neighborhoodSize += point.size;
+        }
+        cout << "[+] MP.7 neighborhood size:" << neighborhoodSize / keypoints.size() << endl;
+        */
         //// EOF STUDENT ASSIGNMENT
 
         // optional : limit number of keypoints (helpful for debugging and learning)
@@ -130,7 +140,7 @@ int main(int argc, const char *argv[])
 
         // push keypoints and descriptor for current frame to end of data buffer
         dataBuffer.last().keypoints = keypoints;
-        cout << "#2 : DETECT KEYPOINTS done" << endl;
+        //cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
@@ -146,7 +156,7 @@ int main(int argc, const char *argv[])
         // push descriptors for current frame to end of data buffer
         dataBuffer.last().descriptors = descriptors;
 
-        cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
+        //cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
@@ -155,7 +165,7 @@ int main(int argc, const char *argv[])
             vector<cv::DMatch> matches;
             string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
             string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-            string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
+            string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN
 
             //// STUDENT ASSIGNMENT
             //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
@@ -165,15 +175,17 @@ int main(int argc, const char *argv[])
                              dataBuffer.secondLast().descriptors, dataBuffer.last().descriptors,
                              matches, descriptorType, matcherType, selectorType);
 
+            totalMatchPoints += matches.size();
+
             //// EOF STUDENT ASSIGNMENT
 
             // store matches in current data frame
             dataBuffer.last().kptMatches = matches;
 
-            cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            //cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = true;
+            bVis = false;
             if (bVis)
             {
                 cv::Mat matchImg = (dataBuffer.last().cameraImg).clone();
@@ -194,6 +206,7 @@ int main(int argc, const char *argv[])
         }
 
     } // eof loop over all images
+    cout << "[+] MP.8 " << totalMatchPoints << "matched keypoints " << endl;
 
     return 0;
 }

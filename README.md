@@ -33,14 +33,20 @@ See the classroom instruction and code comments for more details on each of thes
 
 ## Rubic
 
-#### MP.1 Data Buffer Optimization
+### MP.1 Data Buffer Optimization
+<b>Implement a vector for dataBuffer objects whose size does not exceed a limit (e.g. 2 elements). This can be achieved by pushing in new elements on one end and removing elements on the other end.</b>
+
 A ring buffer is a data structure in programming languages that is treated as a circular buffer or cyclic buffer. It is a memory buffer that is used for the temporary storage of data streams. The ring buffer stores data elements in a circular fashion, so the oldest element is replaced by the newest element when the buffer is full. The actual buffer size is set to nominal size + 1.
 As shown in the figures below. When tail == head, the buffer is empty and when (tail + 1) % len == head, the buffer is full.
 
-#### MP.2 Keypoint Detection
+### MP.2 Keypoint Detection
+<b>Implement detectors HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT and make them selectable by setting a string accordingly.</b>
+
 The function `detKeypointsClassic` was implemented for SHITOMASI and HARRIS detectors. Other detectors were implemented in the function `detKeypointsModern`
 
-#### MP.3 Keypoint Removal
+### MP.3 Keypoint Removal
+<b> Remove all keypoints outside of a pre-defined rectangle and only use the keypoints within the rectangle for further processing. </b>
+
 ```
 // only keep keypoints on the preceding vehicle
   bool bFocusOnVehicle = true;
@@ -58,35 +64,47 @@ The function `detKeypointsClassic` was implemented for SHITOMASI and HARRIS dete
   }
 ```
 
-#### MP.4 Keypoint Descriptors
-Implement descriptors BRIEF, ORB, FREAK, AKAZE and SIFT and make them selectable by setting a string accordingly.
-```
-  //"BRISK", "BRIEF ", "ORB ", "FREAK ", "AKAZE ", "SIFT" All binary descriptors except sift
-  cv::Ptr<cv::DescriptorExtractor> descriptor;
-  if (descriptorType == "BRISK"){
-      int threshold = 30;        // FAST/AGAST detection threshold score.
-      int octaves = 3;           // detection octaves (use 0 to do single scale)
-      float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
+### MP.4 Keypoint Descriptors
+<b> Implement descriptors BRIEF, ORB, FREAK, AKAZE and SIFT and make them selectable by setting a string accordingly. </b>
 
-      descriptor = cv::BRISK::create(threshold, octaves, patternScale);
-  }
-  else if (descriptorType == "BRIEF"){
-      descriptor = cv::xfeatures2d::BriefDescriptorExtractor::create();
-  }
-  else if (descriptorType == "ORB"){
-      descriptor = cv::ORB::create();
-  }
-  else if (descriptorType == "FREAK"){
-      descriptor = cv::xfeatures2d::FREAK::create();
-  }
-  else if (descriptorType == "AKAZE"){
-      descriptor = cv::AKAZE::create();
-  }
-  else if (descriptorType == "SIFT"){
-      descriptor = cv::xfeatures2d::SiftDescriptorExtractor::create();
-  }
+In `matching2D_Student.cpp` line 53 - 91.
 
-  // perform feature description
-  descriptor->compute(img, keypoints, descriptors);
+### MP.5 Descriptor Matching
+<b> Implement FLANN matching as well as k-nearest neighbor selection. Both methods must be selectable using the respective strings in the main function. </b>
 
-```
+In `matching2D_Student.cpp` line 7 - 50.
+
+### MP.6 Descriptor Distance Ratio
+
+Use the K-Nearest-Neighbor matching to implement the descriptor distance ratio test, which looks at the ratio of best vs. second-best match to decide whether to keep an associated pair of keypoints.
+
+In `matching2D_Student.cpp` line 36 - 49.
+
+### MP.7 Performance Evaluation 1
+<b> Count the number of keypoints on the preceding vehicle for all 10 images and take note of the distribution of their neighborhood size. Do this for all the detectors you have implemented. </b>
+
+| Detector | image0 | image1 | image2 | image3 | image4 | image5 | image6 | image7 | image8 | image9 | neighborhood size |
+| :---    | :---  | :---  | :---  |  :--- | :---  | :---  | :---  | :---  | :---  | :---  | :---: |
+| SHI-TOMASI | 125 | 118 | 123 | 120 | 120 | 113 | 114 | 123 | 111 | 112 | 4
+| HARRIS | 50 | 54 | 53 | 55 | 56 | 58 | 57 | 61 | 59 | 57 | 4
+| FAST | 121 | 115 | 127 | 122 | 111 | 113 | 107 | 103 | 112 | 117 | 7
+| BRISK | 264 | 282 | 282 | 277 | 297 | 279 | 289 | 272 | 266 | 254 | 21
+| ORB | 92 | 102 | 106 | 113 | 109 | 125 | 130 | 129 | 127 | 128 | 57
+| AKAZE | 166 | 157 | 161 | 155 | 163 | 164 | 173 | 175 | 177 | 179 | 7
+| SIFT | 138 | 132 | 124 | 137 | 134 | 140 | 137 | 148 | 159 | 137 | 5
+
+### MP.8 Performance Evaluation 2
+
+<b> Count the number of matched keypoints for all 10 images using all possible combinations of detectors and descriptors. In the matching step, the BF approach is used with the descriptor distance ratio set to 0.8. </b>
+| Detector\Descriptor | BRISK | BRIEF | ORB | FREAK | AKAZE | SIFT |
+| ---                 | :---  | :---  |:--- |:---   |:---   |:---  |
+| SHITOMASI           | 767   | 944   | 907 | 768   | -     | 927  |
+| HARRIS              | 393   | 460   | 449 | 396   | -     | 459  |
+| FAST                | 744   | 873   | 879 | 737   | -     | 824  |
+| BRISK               | 1570  | 1704  | 1510| 1524  | -     | 1646 |
+| ORB                 | 751   | 545   | 761 | 420   | -     | 763  |
+| AKAZE               | 1215  | 1266  | 1186| 1187  | 1259  |1270  |
+| SIFT                | 592   | 702   | -   | 593   | -     |800   |
+
+### MP.9 Performance Evaluation 3
+<b> Log the time it takes for keypoint detection and descriptor extraction. The results must be entered into a spreadsheet and based on this data, the TOP3 detector / descriptor combinations must be recommended as the best choice for our purpose of detecting keypoints on vehicles. </b>

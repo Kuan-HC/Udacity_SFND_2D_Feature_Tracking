@@ -46,6 +46,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
                 matches.push_back((*it)[0]);
             }
         }
+        cout << "KNN with n=" << matches.size() << " matches" << endl;
     }
 }
 
@@ -62,7 +63,7 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
 
         descriptor = cv::BRISK::create(threshold, octaves, patternScale);
     }
-    else if (descriptorType == "BRIEF") //"BRIEF ", "ORB ", "FREAK ", "AKAZE ", "SIFT" All binary descriptors exxcept sift
+    else if (descriptorType == "BRIEF") //"BRIEF ", "ORB ", "FREAK ", "AKAZE ", "SIFT" All binary descriptors except sift
     {
         descriptor = cv::xfeatures2d::BriefDescriptorExtractor::create();
     }
