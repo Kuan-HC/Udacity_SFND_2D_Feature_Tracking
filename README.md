@@ -39,6 +39,8 @@ See the classroom instruction and code comments for more details on each of thes
 A ring buffer is a data structure in programming languages that is treated as a circular buffer or cyclic buffer. It is a memory buffer that is used for the temporary storage of data streams. The ring buffer stores data elements in a circular fashion, so the oldest element is replaced by the newest element when the buffer is full. The actual buffer size is set to nominal size + 1.
 As shown in the figures below. When tail == head, the buffer is empty and when (tail + 1) % len == head, the buffer is full.
 
+<img src="images/ringBuffer.png" width="700"/>
+
 ### MP.2 Keypoint Detection
 <b>Implement detectors HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT and make them selectable by setting a string accordingly.</b>
 
